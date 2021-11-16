@@ -4,6 +4,7 @@
   import intlTelInput from "intl-tel-input";
   import "intl-tel-input/build/js/utils.js";
   import { onMount } from "svelte";
+  import { BigNumber } from "bignumber.js";
 
   let phoneInput;
   let phoneInputField;
@@ -30,7 +31,7 @@
       },
       body: JSON.stringify({
         number,
-        amount: state.amount,
+        amount: new BigNumber(state.amount).dividedBy(10 ** 8).toString(),
       }),
     }).then(async (response) => {
       if (response.status === 200) {
@@ -56,7 +57,7 @@
       />
     </p>
     <p>
-      <label for="number">Cantidad</label><br />
+      <label for="number">Cantidad (sats)</label><br />
       <input
         type="number"
         id="input_number"
