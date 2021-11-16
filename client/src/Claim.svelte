@@ -12,7 +12,7 @@
   }
 
   function handleClick() {
-    fetch("https://brave-panda-23.loca.lt/claim", {
+    fetch("https://pink-baboon-41.loca.lt/claim", {
       method: "POST",
       headers: {
         Accept: "application/json",

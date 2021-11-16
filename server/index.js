@@ -27,13 +27,11 @@ app.use(express.json());
 app.use(limiter);
 app.use(cors());
 
-const FROM_NUMBER = '+12057231231';
-
 async function sendTwilioMessage(number, message) {
   const res = await twilio.messages.create({
     body: message,
     to: number,
-    from: FROM_NUMBER,
+    messagingServiceSid: 'MGf4bd128121e8f444353d3f0d92a63987',
   });
 
   console.log(res);
@@ -99,8 +97,18 @@ app.post('/claim', async (req, res) => {
 
     console.log(wosPayment);
 
-    res.status(200).send('ok');
-    console.log('sent ok')
+    if (wosPayment.status === 'FAILED') {
+      payment._claimed = false;
+
+      await db.write();
+
+      res.status(500).send('Payment is failed.');
+    } else {
+      res.status(200).send('ok');
+      console.log('sent ok')
+    }
+
+
   } catch (err) {
     console.log(err);
     res.status(500).send(err);

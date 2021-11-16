@@ -22,7 +22,7 @@
   function handleClick() {
     const number = phoneInput.getNumber();
 
-    fetch("https://brave-panda-23.loca.lt/requestinvoicetonumber", {
+    fetch("https://pink-baboon-41.loca.lt/requestinvoicetonumber", {
       method: "POST",
       headers: {
         Accept: "application/json",
