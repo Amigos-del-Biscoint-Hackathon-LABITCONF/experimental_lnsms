@@ -1,7 +1,7 @@
 <script>
   import "intl-tel-input/build/js/utils.js";
 
-  export const params = {};
+  export let params = {};
 
   const { code } = params;
 
@@ -34,6 +34,7 @@
 
 <main>
   <h1>lnsms</h1>
+  <h3>Experimental lightning network by SMS</h3>
   <p>
     <label for="string">Insira tu invoice (orden de pago) lightning</label><br
     />

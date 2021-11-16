@@ -1,6 +1,6 @@
 <script>
   import "intl-tel-input/build/css/intlTelInput.css";
-
+  import QRCode from "svelte-qrcode";
   import intlTelInput from "intl-tel-input";
   import "intl-tel-input/build/js/utils.js";
   import { onMount } from "svelte";
@@ -12,7 +12,7 @@
     phoneInput = intlTelInput(phoneInputField, {});
   });
 
-  const state = { amount: undefined };
+  const state = { amount: undefined, invoice: undefined };
 
   function handleAmountChange(e) {
     state.amount = e.target.value;
@@ -34,7 +34,8 @@
       }),
     }).then(async (response) => {
       if (response.status === 200) {
-        console.log(await response.json());
+        const res = await response.json();
+        state.invoice = res.invoice;
         alert("Orden de pago creada!");
       }
     });
@@ -43,26 +44,31 @@
 
 <main>
   <h1>lnsms</h1>
-  <p>
-    <label for="phone">Número de Teléfono Móvil</label><br />
-    <input
-      type="tel"
-      bind:this={phoneInputField}
-      id="input_phone"
-      name="phone"
-    />
-  </p>
-  <p>
-    <label for="number">Cantidad</label><br />
-    <input
-      type="number"
-      id="input_number"
-      name="number"
-      on:change={handleAmountChange}
-    />
-  </p>
+  <h3>Experimental lightning network payments by SMS (1000 sats fixed fee)</h3>
+  {#if !state.invoice}
+    <p>
+      <label for="phone">Número de Teléfono Móvil</label><br />
+      <input
+        type="tel"
+        bind:this={phoneInputField}
+        id="input_phone"
+        name="phone"
+      />
+    </p>
+    <p>
+      <label for="number">Cantidad</label><br />
+      <input
+        type="number"
+        id="input_number"
+        name="number"
+        on:change={handleAmountChange}
+      />
+    </p>
 
-  <button on:click={handleClick}>Generar orden de pago</button>
+    <button on:click={handleClick}>Generar orden de pago</button>
+  {:else}
+    <QRCode value={state.invoice} />
+  {/if}
 </main>
 
 <style>

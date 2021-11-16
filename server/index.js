@@ -51,11 +51,11 @@ app.post('/requestinvoicetonumber', async (req, res) => {
   if (!number || !amount) {
     return res.status(400).send('Missing number or amount');
   }
-  
+
 
   const bnAmount = new BigNumber(amount).minus(0.00001);
 
-  if (bnAmount.isLessThan(0)) {
+  if (bnAmount.isLessThanOrEqualTo(0)) {
     return res.status(400).send('Amount (with 1000 sats fee debited) must be greater than 0');
   }
 
@@ -67,6 +67,8 @@ app.post('/requestinvoicetonumber', async (req, res) => {
 app.post('/claim', async (req, res) => {
   const { code, invoice } = req.body;
 
+  console.log(req.body);
+
   if (!code || !invoice) {
     return res.status(400).send('Missing code or invoice');
   }
@@ -74,7 +76,16 @@ app.post('/claim', async (req, res) => {
   try {
     await db.read();
 
-    const payment = db.data.payments?.find(p => p._claimCode === code);
+    const payment = (() => {
+      for (const pId of Object.keys(db.data.payments)) {
+        const payment = db.data.payments[pId];
+
+        if (payment._claimCode === code) {
+          console.log('yes');
+          return payment;
+        }
+      }
+    })();
 
     if (!payment) {
       return res.status(400).send('Invalid code');
@@ -82,10 +93,13 @@ app.post('/claim', async (req, res) => {
 
     const bnAmount = new BigNumber(payment.amount).minus(0.00001);
 
-    await WalletOfSatoshi.makePayment(invoice, 'LIGHTNING', bnAmount.toFixed());
+    const wosPayment = await WalletOfSatoshi.makePayment(invoice, 'LIGHTNING', bnAmount.toFixed());
 
-    res.status(200).send(ok);
+    console.log(wosPayment);
+
+    res.status(200).send('ok');
   } catch (err) {
+    console.log(err);
     res.status(500).send(err);
   }
 });
