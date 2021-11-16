@@ -76,15 +76,17 @@ app.post('/claim', async (req, res) => {
   try {
     await db.read();
 
-    const payment = (() => {
+    const payment = await (async () => {
       for (const pId of Object.keys(db.data.payments)) {
         const payment = db.data.payments[pId];
 
-        if (payment._claimCode === code) {
-          console.log('yes');
+        if (payment._claimCode === code && !payment._claimed) {
+          payment._claimed = true;
           return payment;
         }
       }
+
+      await db.write();
     })();
 
     if (!payment) {
