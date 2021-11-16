@@ -25,8 +25,9 @@
       }),
     }).then(async (response) => {
       if (response.status === 200) {
-        console.log(await response.json());
         alert("Pago enviado!");
+      } else {
+        alert("Error");
       }
     });
   }

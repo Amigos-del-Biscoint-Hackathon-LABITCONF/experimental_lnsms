@@ -100,6 +100,7 @@ app.post('/claim', async (req, res) => {
     console.log(wosPayment);
 
     res.status(200).send('ok');
+    console.log('sent ok')
   } catch (err) {
     console.log(err);
     res.status(500).send(err);

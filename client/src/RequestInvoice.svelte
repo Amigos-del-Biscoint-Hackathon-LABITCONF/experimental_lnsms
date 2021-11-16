@@ -38,6 +38,8 @@
         const res = await response.json();
         state.invoice = res.invoice;
         alert("Orden de pago creada!");
+      } else {
+        alert("Error al crear orden de pago");
       }
     });
   }
